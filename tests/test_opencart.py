@@ -1,12 +1,12 @@
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+import time
 
 from page_objects.HomePage import Homepage
 from page_objects.CatalogPage import Catalogpage
 from page_objects.NavPanPage import Currency
 from page_objects.NavPanPage import ShoppingCart
 from page_objects.CartPage import Cart
+from page_objects.RegistrationPage import Registrationpage
+from page_objects.AdminPage import Adminpage
 
 
 def test_homepage(browser, url_homepage):
@@ -46,39 +46,31 @@ def test_product_tablet(browser, url_homepage):
     assert 'Reviews' in review_tablet.text, f'Здесь ожидается наличие текста: Review, а получен {description_tablet.text}'
 
 
-# Registration/Authorisation
 def test_registration(browser, url_homepage):
-    Homepage(browser).get_url(url_homepage + '/en-gb?route=account/register')
+    Registrationpage(browser).get_reg_url(url_homepage)
     assert 'Register Account' in browser.title, f'Ожидался заголовок с надписью Register Account, а появился: {browser.title}'  # 1
 
-    register_link = browser.find_element(By.CSS_SELECTOR,
-                                         "li.breadcrumb-item a[href*='account/register'")  # 2 CSS_SELECTOR
+    register_link = Registrationpage(browser).get_element(Registrationpage.REG_LINK)  # 2 CSS_SELECTOR
     assert register_link.text == 'Register', f'Ожидался текст с надписью Register, а появился: {register_link.text}'
-    wait = WebDriverWait(browser, 2)
-    wait.until(EC.visibility_of_element_located(
-        (By.XPATH, "//div[@class='col-sm-10']/input[@name='firstname' and @class='form-control']")))  # 3 XPATH
-    wait.until(EC.visibility_of_element_located(
-        (By.XPATH, "//div[@class='col-sm-10']/input[@name='password' and @class='form-control']")))  # 4 XPATH
-    continue_button = wait.until(EC.visibility_of_element_located(
-        (By.XPATH, "//button[@type='submit' and @class='btn btn-primary']")))  # 5 XPATH
+    Registrationpage(browser).get_element(Registrationpage.FIRST_NAME)  # 3 XPATH
+    Registrationpage(browser).get_element(Registrationpage.PAS)  # 4 XPATH
+    continue_button = Registrationpage(browser).get_element(Registrationpage.CONTINUE_BUTTON)  # 5 XPATH
     assert continue_button.text == 'Continue', f'Ожидался текст с надписью Continue, а появился: {continue_button.text}'
 
 
-# Registration/Authorisation
-def test_auth(browser, access, url_homepage):
+def test_reg_new_user(browser, url_homepage):
+    pass
+
+
+def test_admin_auth(browser, access, url_homepage):
     username_text, password_text = access
-    Homepage(browser).get_url(url_homepage + '/administration/')
+    Adminpage(browser).get_auth_url(url_homepage)
     assert 'Administration' in browser.title, f'Ожидался заголовок с надписью Administration, а появился: {browser.title}'  # 1
 
-    wait = WebDriverWait(browser, 2)
-    username = wait.until(EC.visibility_of_element_located(
-        (By.CSS_SELECTOR, "input[id = 'input-username']")))  # 2 CSS_SELECTOR
-    password = wait.until(EC.visibility_of_element_located(
-        (By.CSS_SELECTOR, "input[id = 'input-password']")))  # 3 CSS_SELECTOR
-    login_button = wait.until(EC.visibility_of_element_located(
-        (By.XPATH, "//button[@class='btn btn-primary' and @type='submit']")))  # 4 XPATH
-    rights_link = wait.until(EC.visibility_of_element_located(
-        (By.XPATH, "//footer[@id='footer']/a")))  # 5 XPATH
+    username = Adminpage(browser).get_element(Adminpage.USERNAME)  # 2 CSS_SELECTOR
+    password = Adminpage(browser).get_element(Adminpage.PAS)  # 3 CSS_SELECTOR
+    login_button = Adminpage(browser).get_element(Adminpage.LOGING_BUTTON)  # 4 XPATH
+    rights_link = Adminpage(browser).get_element(Adminpage.RIGHTS)  # 5 XPATH
     assert 'OpenCart' in rights_link.text, f'Ожидался текст с наличием надписи OpenCart, а появился: {rights_link.text}'
 
     username.click()
@@ -86,14 +78,73 @@ def test_auth(browser, access, url_homepage):
     password.click()
     password.send_keys(password_text)
     login_button.click()
-    wait = WebDriverWait(browser, 2)
-    wait.until(EC.title_contains("Dashboard"))
+    Adminpage(browser).title_page(Adminpage.TITLE_ADMIN)
     assert 'Dashboard' in browser.title, f'Ожидался заголовок с надписью Dashboard, а появился: {browser.title}'
 
-    wait.until(EC.visibility_of_element_located(
-        (By.CSS_SELECTOR, "li[id = 'nav-logout'] a.nav-link"))).click()
-    wait.until(EC.title_contains("Administration"))
+    Adminpage(browser).click_element(Adminpage.LOGOUT)
+    Adminpage(browser).title_page(Adminpage.TITLE_AUTH)
     assert 'Administration' in browser.title, f'Ожидался заголовок с надписью Administration, а появился: {browser.title}'
+
+
+def test_add_item(browser, access, url_homepage):
+    username_text, password_text = access
+    word = 'XXX'
+    Adminpage(browser).get_auth_url(url_homepage)
+    assert 'Administration' in browser.title, f'Ожидался заголовок с надписью Administration, а появился: {browser.title}'
+
+    Adminpage(browser).click_element(Adminpage.USERNAME)
+    Adminpage(browser).get_element(Adminpage.USERNAME).send_keys(username_text)
+    Adminpage(browser).click_element(Adminpage.PAS)
+    Adminpage(browser).get_element(Adminpage.PAS).send_keys(password_text)
+    Adminpage(browser).click_element(Adminpage.LOGING_BUTTON)
+    Adminpage(browser).title_page(Adminpage.TITLE_ADMIN)
+
+    Adminpage(browser).click_element(Adminpage.CATALOG_ADMIN)
+    Adminpage(browser).click_element(Adminpage.PRODUCTS_ADMIN)
+    Adminpage(browser).click_element(Adminpage.PLUS_BUTTON)
+    Adminpage(browser).get_element(Adminpage.CR_PRODUCT_NAME).send_keys(word)
+    Adminpage(browser).get_element(Adminpage.CR_META_TAG).send_keys(word)
+    Adminpage(browser).click_element(Adminpage.DATA_ADMIN)
+    Adminpage(browser).get_element(Adminpage.CR_MODEL).send_keys(word)
+    Adminpage(browser).click_element(Adminpage.SEO_ADMIN)
+    Adminpage(browser).get_element(Adminpage.CR_KEYWORD).send_keys(word)
+    Adminpage(browser).click_element(Adminpage.CR_SAVE)
+
+    Adminpage(browser).click_element(Adminpage.PRODUCTS_ADMIN)
+    Adminpage(browser).scrolling_page(Adminpage(browser).get_element(Adminpage.NAV_ARROW_ADMIN))
+    time.sleep(0.5)
+    Adminpage(browser).click_element(Adminpage.NAV_ARROW_ADMIN)
+    Adminpage(browser).get_element(Adminpage.LIST_PRODUCT_NAME)
+
+
+def test_delete_item(browser, access, url_homepage):
+    username_text, password_text = access
+    Adminpage(browser).get_auth_url(url_homepage)
+    assert 'Administration' in browser.title, f'Ожидался заголовок с надписью Administration, а появился: {browser.title}'
+
+    Adminpage(browser).click_element(Adminpage.USERNAME)
+    Adminpage(browser).get_element(Adminpage.USERNAME).send_keys(username_text)
+    Adminpage(browser).click_element(Adminpage.PAS)
+    Adminpage(browser).get_element(Adminpage.PAS).send_keys(password_text)
+    Adminpage(browser).click_element(Adminpage.LOGING_BUTTON)
+    Adminpage(browser).title_page(Adminpage.TITLE_ADMIN)
+
+    Adminpage(browser).click_element(Adminpage.CATALOG_ADMIN)
+    Adminpage(browser).click_element(Adminpage.PRODUCTS_ADMIN)
+    Adminpage(browser).scrolling_page(Adminpage(browser).get_element(Adminpage.NAV_ARROW_ADMIN))
+    time.sleep(0.5)
+    Adminpage(browser).click_element(Adminpage.NAV_ARROW_ADMIN)
+    Adminpage(browser).click_element(Adminpage.CHECKBOX_ADMIN)
+    Adminpage(browser).scrolling_page(Adminpage(browser).get_element(Adminpage.CR_TRASH))
+    time.sleep(0.5)
+    Adminpage(browser).click_element(Adminpage.CR_TRASH)
+    Adminpage(browser).allert().accept()
+
+    Adminpage(browser).refresh_page()  # Проверка удаления элемента
+    Adminpage(browser).scrolling_page(Adminpage(browser).get_element(Adminpage.NAV_ARROW_ADMIN))
+    time.sleep(0.5)
+    Adminpage(browser).click_element(Adminpage.NAV_ARROW_ADMIN)
+    Adminpage(browser).is_element_absent(Adminpage.CHECKBOX_ADMIN)
 
 
 def test_cart(browser, url_homepage):
