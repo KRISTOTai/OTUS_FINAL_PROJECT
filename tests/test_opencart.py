@@ -59,7 +59,22 @@ def test_registration(browser, url_homepage):
 
 
 def test_reg_new_user(browser, url_homepage):
-    pass
+    Registrationpage(browser).get_reg_url(url_homepage)
+    assert 'Register Account' in browser.title, f'Ожидался заголовок с надписью Register Account, а появился: {browser.title}'
+
+    first_name, lastname, email = Registrationpage(browser).random_values()
+    Registrationpage(browser).get_element(Registrationpage.FIRST_NAME).send_keys(first_name)
+    Registrationpage(browser).get_element(Registrationpage.LAST_NAME).send_keys(lastname)
+    Registrationpage(browser).get_element(Registrationpage.EMAIL).send_keys(email)
+    Registrationpage(browser).get_element(Registrationpage.PAS).send_keys('123456')
+    Registrationpage(browser).scrolling_page(
+        Registrationpage(browser).get_element(Registrationpage.PRIVATE_POLICY_BUTTON))
+    time.sleep(0.5)
+    Registrationpage(browser).click_element(Registrationpage.PRIVATE_POLICY_BUTTON)
+    time.sleep(0.5)
+    Registrationpage(browser).click_element(Registrationpage.CONTINUE_BUTTON)
+    time.sleep(0.5)
+    assert 'Your Account Has Been Created!' in browser.title, f'Ожидалась страница подтверждения аккаунта, а появилась {browser.title}'
 
 
 def test_admin_auth(browser, access, url_homepage):
@@ -165,11 +180,11 @@ def test_currency(browser, url_homepage):
     assert 'Store' in browser.title, f'Ожидался заголовок с надписью Store, а появился: {browser.title}'
     Currency(browser).click_element(Currency.CARET_DOWN)
     Currency(browser).click_element(Currency.EUR)
-    change_price = Currency(browser).click_element(Currency.PRICE_ITEM)
+    change_price = Currency(browser).get_element(Currency.PRICE_ITEM)
     assert '€' in change_price.text, f'Ожидалась валюта €, а появилась: {change_price.text}'
 
     Catalogpage(browser).get_catalog_url(url_homepage)
     Currency(browser).click_element(Currency.CARET_DOWN)
     Currency(browser).click_element(Currency.GBP)
-    change_price_gbp = Currency(browser).click_element(Currency.PRICE_ITEM)
+    change_price_gbp = Currency(browser).get_element(Currency.PRICE_ITEM)
     assert '£' in change_price_gbp.text, f'Ожидалась валюта £, а появилась: {change_price_gbp.text}'
