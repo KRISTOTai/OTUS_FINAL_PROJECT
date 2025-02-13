@@ -11,3 +11,10 @@ class Homepage(BasePage):
 
     def get_hp_url(self, url_homepage):
         self.get_url(url_homepage)
+
+    def get_elements_homepg(self):
+        self.get_element(self.SEARCH)
+        self.get_element(self.CART_BUTTON)
+        desktops_link = self.get_element(self.DESCTOPS_NAV_PAN)
+        mp3_link = self.get_element(self.MP3_NAV_PAN)
+        return desktops_link, mp3_link

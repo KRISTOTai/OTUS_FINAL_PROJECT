@@ -8,6 +8,11 @@ class Currency(BasePage):
     EUR = (By.CSS_SELECTOR, "li a[href = 'EUR']")
     GBP = (By.CSS_SELECTOR, "li a[href = 'GBP']")
 
+    def get_elements_currency(self, locator):
+        self.click_element(self.CARET_DOWN)
+        self.click_element(locator)
+        return self.get_element(self.PRICE_ITEM)
+
 
 class ShoppingCart(BasePage):
     SHOP_CART_BUTTON = (By.XPATH, "//a[@title = 'Shopping Cart']/span[@class = 'd-none d-md-inline']")
