@@ -153,7 +153,7 @@ def test_delete_item(browser, access, url_homepage):
     Adminpage(browser).scrolling_page(Adminpage(browser).get_element(Adminpage.CR_TRASH))
     time.sleep(0.5)
     Adminpage(browser).click_element(Adminpage.CR_TRASH)
-    Adminpage(browser).allert().accept()
+    Adminpage(browser).alert().accept()
 
     Adminpage(browser).refresh_page()  # Проверка удаления элемента
     Adminpage(browser).scrolling_page(Adminpage(browser).get_element(Adminpage.NAV_ARROW_ADMIN))

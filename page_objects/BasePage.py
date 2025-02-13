@@ -34,7 +34,7 @@ class BasePage:
         except TimeoutException:
             return True, print('Элемент ожидаемо не найден')
 
-    def allert(self, timeout=2):
+    def alert(self, timeout=2):
         return WebDriverWait(self.browser, timeout).until(EC.alert_is_present())
 
     def refresh_page(self):
