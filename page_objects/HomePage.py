@@ -4,7 +4,7 @@ import allure
 
 
 class Homepage(BasePage):
-    SEARCH = (By.CSS_SELECTOR, "[name = 'searc']")
+    SEARCH = (By.CSS_SELECTOR, "[name = 'search']")
     CART_BUTTON = (By.XPATH, "//button[contains(@class, 'btn btn-lg btn-inverse btn-block dropdown-toggle')]")
     DESCTOPS_NAV_PAN = (By.CSS_SELECTOR, "a.nav-link.dropdown-toggle")
     MP3_NAV_PAN = (By.CSS_SELECTOR, "a.nav-link.dropdown-toggle[href*='mp3-players']")
