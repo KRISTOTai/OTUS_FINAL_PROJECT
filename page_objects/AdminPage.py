@@ -1,4 +1,5 @@
 import time
+import allure
 from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
 
@@ -38,6 +39,7 @@ class Adminpage(BasePage):
         rights_link = self.get_element(self.RIGHTS)  # 5 XPATH
         return username, password, login_button, rights_link
 
+    @allure.step('Авторизация в админке')
     def login_adminpg(self, access):
         username_text, password_text = access
         username, password, login_button, _ = self.get_elements_adminpg()
@@ -48,10 +50,12 @@ class Adminpage(BasePage):
         login_button.click()
         self.title_page(self.TITLE_ADMIN)
 
+    @allure.step('Выход из админки')
     def logout_adminpg(self):
         self.click_element(self.LOGOUT)
         self.title_page(self.TITLE_AUTH)
 
+    @allure.step('Добавление товара')
     def add_item_adminpg(self, access):
         word = 'XXX'
         self.login_adminpg(access)  # Авторизация
@@ -73,6 +77,7 @@ class Adminpage(BasePage):
         self.click_element(self.NAV_ARROW_ADMIN)
         self.get_element(self.LIST_PRODUCT_NAME)
 
+    @allure.step('Удаление товара')
     def delete_item_adminpg(self, access):
         self.login_adminpg(access)  # Авторизация
 

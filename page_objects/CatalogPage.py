@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
+import allure
 
 
 class Catalogpage(BasePage):
@@ -23,6 +24,7 @@ class Catalogpage(BasePage):
     def get_cat_product_url(self, url_homepage):
         self.get_url(url_homepage + '/en-gb/product/tablet/samsung-galaxy-tab-10-1')
 
+    @allure.step('Поиск элементов в каталоге')
     def get_elements_catalogpg(self):
         tablet_link = self.get_element(self.SAMSUNG_LINK)
         self.get_element(self.HEART_BUTTON)
@@ -30,6 +32,7 @@ class Catalogpage(BasePage):
         self.get_element(self.SORT_LIST)
         return tablet_link
 
+    @allure.step('Поиск элементов в карточке продукта')
     def get_elements_product_catalogpg(self):
         tablet_link = self.get_element(self.NAV_ITEM_LINK)
         description_tablet = self.get_element(self.DESCRIPTION_ITEM)
@@ -38,6 +41,7 @@ class Catalogpage(BasePage):
         self.get_element(self.ADD_TO_CART)
         return tablet_link, description_tablet, review_tablet
 
+    @allure.step('Добавление в корзину')
     def get_elements_for_cart_catalogpg(self):
         self.title_page(self.IPHONE_TITLE)
         self.click_element(self.ADD_TO_CART)

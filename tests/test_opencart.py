@@ -1,3 +1,4 @@
+import allure
 from page_objects.HomePage import Homepage
 from page_objects.CatalogPage import Catalogpage
 from page_objects.NavPanPage import Currency
@@ -7,6 +8,9 @@ from page_objects.RegistrationPage import Registrationpage
 from page_objects.AdminPage import Adminpage
 
 
+@allure.link("https://github.com/OtusTeam/QA-Python/blob/master/reporting/hw.md", name="DZ_Allure")
+@allure.epic('Searching of elements')
+@allure.title('Search of 5 elements on a Homepage')
 def test_homepage(browser, url_homepage):
     Homepage(browser).get_hp_url(url_homepage)
     assert 'Store' in browser.title, f'Ожидался заголовок с надписью Store, а появился: {browser.title}'  # 1
@@ -16,6 +20,8 @@ def test_homepage(browser, url_homepage):
     assert mp3_link.text.strip() == "MP3 Players", f"Ожидался текст: MP3 Players, однако получен: {mp3_link.text.strip()}"  # 5 CSS_SELECTOR + attribute
 
 
+@allure.epic('Searching of elements')
+@allure.title('Search of 5 elements on a Catalogpage')
 def test_cat_tablet(browser, url_homepage):
     Catalogpage(browser).get_catalog_url(url_homepage)
     assert 'Tablets' in browser.title, f'Ожидался заголовок с надписью Tablets, а появился: {browser.title}'  # 1
@@ -24,6 +30,8 @@ def test_cat_tablet(browser, url_homepage):
     assert 'Samsung Galaxy Tab 10.1' in tablet_link.text, f"Ожидался текст: Samsung Galaxy Tab 10.1, однако получен: {tablet_link.text.strip()}"
 
 
+@allure.epic('Searching of elements')
+@allure.title('Search of 5 elements on a Productpage')
 def test_product_tablet(browser, url_homepage):
     Catalogpage(browser).get_cat_product_url(url_homepage)
     assert '10.1' in browser.title, f'Ожидался заголовок с надписью 10.1, а появился: {browser.title}'  # 1
@@ -35,6 +43,8 @@ def test_product_tablet(browser, url_homepage):
     assert 'Reviews' in review_tablet.text, f'Здесь ожидается наличие текста: Review, а получен {description_tablet.text}'
 
 
+@allure.epic('Searching of elements')
+@allure.title('Search of 5 elements on a Registrationpage')
 def test_registration(browser, url_homepage):
     Registrationpage(browser).get_reg_url(url_homepage)
     assert 'Register Account' in browser.title, f'Ожидался заголовок с надписью Register Account, а появился: {browser.title}'  # 1
@@ -44,6 +54,9 @@ def test_registration(browser, url_homepage):
     assert continue_button.text == 'Continue', f'Ожидался текст с надписью Continue, а появился: {continue_button.text}'
 
 
+@allure.epic('Page actions')
+@allure.feature('Registration')
+@allure.title('Registration of new user')
 def test_reg_new_user(browser, url_homepage):
     Registrationpage(browser).get_reg_url(url_homepage)
     assert 'Register Account' in browser.title, f'Ожидался заголовок с надписью Register Account, а появился: {browser.title}'
@@ -52,6 +65,9 @@ def test_reg_new_user(browser, url_homepage):
     assert 'Your Account Has Been Created!' in browser.title, f'Ожидалась страница подтверждения аккаунта, а появилась {browser.title}'
 
 
+@allure.epic('Page actions')
+@allure.feature('Authorization')
+@allure.title('Authorization on a Adminpage')
 def test_admin_auth(browser, access, url_homepage):
     Adminpage(browser).get_auth_url(url_homepage)
     assert 'Administration' in browser.title, f'Ожидался заголовок с надписью Administration, а появился: {browser.title}'  # 1
@@ -65,6 +81,9 @@ def test_admin_auth(browser, access, url_homepage):
     assert 'Administration' in browser.title, f'Ожидался заголовок с надписью Administration, а появился: {browser.title}'
 
 
+@allure.epic('Page actions')
+@allure.feature('Handling with products')
+@allure.title('Add new product on a Adminpage')
 def test_add_item(browser, access, url_homepage):
     Adminpage(browser).get_auth_url(url_homepage)
     assert 'Administration' in browser.title, f'Ожидался заголовок с надписью Administration, а появился: {browser.title}'
@@ -72,6 +91,9 @@ def test_add_item(browser, access, url_homepage):
     Adminpage(browser).add_item_adminpg(access)
 
 
+@allure.epic('Page actions')
+@allure.feature('Handling with products')
+@allure.title('Delete product on a Adminpage')
 def test_delete_item(browser, access, url_homepage):
     Adminpage(browser).get_auth_url(url_homepage)
     assert 'Administration' in browser.title, f'Ожидался заголовок с надписью Administration, а появился: {browser.title}'
@@ -79,6 +101,9 @@ def test_delete_item(browser, access, url_homepage):
     Adminpage(browser).delete_item_adminpg(access)
 
 
+@allure.epic('Page actions')
+@allure.feature('Handling with products')
+@allure.title('Add product to cart')
 def test_cart(browser, url_homepage):
     Homepage(browser).get_url(url_homepage)
     assert 'Store' in browser.title, f'Ожидался заголовок с надписью Store, а появился: {browser.title}'
@@ -90,6 +115,9 @@ def test_cart(browser, url_homepage):
     assert 'iPhone' in cart_item.text, f'Ожидался текст с наличием надписи iPhone, а появился: {cart_item.text}'
 
 
+@allure.epic('Page actions')
+@allure.feature('Handling with currency')
+@allure.title('Changing currency')
 def test_currency(browser, url_homepage):
     Homepage(browser).get_hp_url(url_homepage)
     assert 'Store' in browser.title, f'Ожидался заголовок с надписью Store, а появился: {browser.title}'

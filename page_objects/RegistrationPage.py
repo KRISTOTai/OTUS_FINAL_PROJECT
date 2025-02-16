@@ -1,4 +1,5 @@
 import time
+import allure
 from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
 from faker import Faker
@@ -23,6 +24,7 @@ class Registrationpage(BasePage):
         email = faker.email()
         return first_name, last_name, email
 
+    @allure.step('Поиск элементов на странице регистрации')
     def get_elements_regpg(self):
         register_link = self.get_element(self.REG_LINK)
         continue_button = self.get_element(self.CONTINUE_BUTTON)
@@ -30,6 +32,7 @@ class Registrationpage(BasePage):
         self.get_element(self.PAS)
         return register_link, continue_button
 
+    @allure.step('Заполнение полей при регистрации')
     def set_elements_new_reg(self):
         first_name, lastname, email = self.random_values()
         self.get_element(self.FIRST_NAME).send_keys(first_name)
