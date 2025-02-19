@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
+import allure
 
 
 class Currency(BasePage):
@@ -7,6 +8,12 @@ class Currency(BasePage):
     CARET_DOWN = (By.CSS_SELECTOR, "i.fa-solid.fa-caret-down")
     EUR = (By.CSS_SELECTOR, "li a[href = 'EUR']")
     GBP = (By.CSS_SELECTOR, "li a[href = 'GBP']")
+
+    @allure.step('Изменение валюты')
+    def get_elements_currency(self, locator):
+        self.click_element(self.CARET_DOWN)
+        self.click_element(locator)
+        return self.get_element(self.PRICE_ITEM)
 
 
 class ShoppingCart(BasePage):

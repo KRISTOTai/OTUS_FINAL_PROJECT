@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
+import allure
 
 
 class Homepage(BasePage):
@@ -11,3 +12,11 @@ class Homepage(BasePage):
 
     def get_hp_url(self, url_homepage):
         self.get_url(url_homepage)
+
+    @allure.step('Поиск элементов на стартовой странице')
+    def get_elements_homepg(self):
+        self.get_element(self.SEARCH)
+        self.get_element(self.CART_BUTTON)
+        desktops_link = self.get_element(self.DESCTOPS_NAV_PAN)
+        mp3_link = self.get_element(self.MP3_NAV_PAN)
+        return desktops_link, mp3_link

@@ -7,3 +7,6 @@ class Cart(BasePage):
 
     def get_cart_url(self, url_homepage):
         self.get_url(url_homepage + '/en-gb?route=checkout/cart')
+
+    def get_elements_cart(self):
+        return self.get_element(self.PRODUCT_NAME)
