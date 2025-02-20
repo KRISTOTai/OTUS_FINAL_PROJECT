@@ -13,12 +13,22 @@ def pytest_addoption(parser):
     parser.addoption("--url", default="http://192.168.31.246:8081", help="HomePage OpenCart")
     parser.addoption("--log_level", action="store", default="INFO")
 
+    parser.addoption("--executor", action="store", default="192.168.31.246")
+    parser.addoption("--video", action="store_true")
+    parser.addoption("--logs", action="store_true")
+    parser.addoption("--vnc", action="store_true")
+    parser.addoption("--bv")
+
 
 @pytest.fixture()
 def browser(request):
     browser_name = request.config.getoption("--browser")
     headless = request.config.getoption("--headless")  # True - False
     log_level = request.config.getoption("--log_level")
+    # version = request.config.getoption("--bv")
+    # logs = request.config.getoption("--logs")
+    # video = request.config.getoption("--video")
+    # vnc = request.config.getoption("--vnc")
 
     logger = logging.getLogger(request.node.name)
     # file_handler = logging.FileHandler(f"logs/{request.node.name}.log")
@@ -27,34 +37,59 @@ def browser(request):
     logger.setLevel(level=log_level)
     logger.info("=> Test started at %s" % datetime.datetime.now())
 
-    if browser_name in ["chrome", "ch"]:
-        options = ChromeOptions()
-        if headless:
-            options.add_argument("--headless=new")
-        driver = webdriver.Chrome(options=options)
-    elif browser_name in ["firefox", "ff"]:
-        options = FFOptions()
-        if headless:
-            options.add_argument("--headless")
-        driver = webdriver.Firefox(options=options)
-    elif browser_name in ["brave", "br"]:
+    if browser_name in ["brave_local", "br_local", "br"]:
         brave_path = "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-        chromedriver_path = "C:/Users/Igoryan/.cache/selenium/chromedriver/win64/131.0.6778.264/chromedriver.exe"
+        chromedriver_path = "C:/Users/Igoryan/.cache/selenium/chromedriver/win64/132.0.6834.159/chromedriver.exe"
         # Настраиваем параметры для Brave
         options = ChromeOptions()
         options.binary_location = brave_path
-        # Создаём экземпляр браузера
-        service = Service(chromedriver_path)
         if headless:
             options.add_argument("--headless=new")
+        # Создаём экземпляр браузера
+        service = Service(chromedriver_path)
         driver = webdriver.Chrome(service=service, options=options)
-
+    elif browser_name == "chrome":
+        options = ChromeOptions()
+        driver = remote_start(options, request)
+    elif browser_name == "firefox":
+        options = FFOptions()
+        driver = remote_start(options, request)
+    else:
+        raise ValueError(f"Неизвестный браузер: {browser_name}")
     driver.maximize_window()
 
     yield driver
 
     driver.quit()
     logger.info("=> Test finished at %s" % datetime.datetime.now())
+
+
+def remote_start(options, request):
+    executor = request.config.getoption("--executor")
+    browser_name = request.config.getoption("--browser")
+    caps = {
+        "browserName": browser_name,
+        # "browserVersion": version,
+        # "selenoid:options": {
+            # "enableVNC": True,
+            # "name": request.node.name,
+            # "screenResolution": "1280x2000",
+            # "enableVideo": video,
+            # "enableLog": logs,
+            # "timeZone": "Europe/Moscow",
+            # "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"]
+        # },
+        # "acceptInsecureCerts": True,
+    }
+
+    for k, v in caps.items():
+        options.set_capability(k, v)
+
+    driver = webdriver.Remote(
+        command_executor=f"http://{executor}:4444/wd/hub",
+        options=options
+    )
+    return driver
 
 
 @pytest.fixture()
