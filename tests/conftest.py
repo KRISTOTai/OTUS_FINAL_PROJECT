@@ -25,10 +25,6 @@ def browser(request):
     browser_name = request.config.getoption("--browser")
     headless = request.config.getoption("--headless")  # True - False
     log_level = request.config.getoption("--log_level")
-    version = request.config.getoption("--bv")
-    logs = request.config.getoption("--logs")
-    video = request.config.getoption("--video")
-    vnc = request.config.getoption("--vnc")
 
     logger = logging.getLogger(request.node.name)
     logger.setLevel(level=log_level)
@@ -64,18 +60,22 @@ def browser(request):
 def remote_start(options, request):
     executor = request.config.getoption("--executor")
     browser_name = request.config.getoption("--browser")
+    version = request.config.getoption("--bv")
+    logs = request.config.getoption("--logs")
+    video = request.config.getoption("--video")
+    vnc = request.config.getoption("--vnc")
     caps = {
         "browserName": browser_name,
         # "browserVersion": version,
-        # "selenoid:options": {
+        "selenoid:options": {
             # "enableVNC": True,
             # "name": request.node.name,
             # "screenResolution": "1280x2000",
-            # "enableVideo": video,
+             "enableVideo": video,
             # "enableLog": logs,
             # "timeZone": "Europe/Moscow",
             # "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"]
-        # },
+         },
         # "acceptInsecureCerts": True,
     }
 
