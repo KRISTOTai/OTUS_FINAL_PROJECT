@@ -25,15 +25,12 @@ def browser(request):
     browser_name = request.config.getoption("--browser")
     headless = request.config.getoption("--headless")  # True - False
     log_level = request.config.getoption("--log_level")
-    # version = request.config.getoption("--bv")
-    # logs = request.config.getoption("--logs")
-    # video = request.config.getoption("--video")
-    # vnc = request.config.getoption("--vnc")
+    version = request.config.getoption("--bv")
+    logs = request.config.getoption("--logs")
+    video = request.config.getoption("--video")
+    vnc = request.config.getoption("--vnc")
 
     logger = logging.getLogger(request.node.name)
-    # file_handler = logging.FileHandler(f"logs/{request.node.name}.log")
-    # file_handler.setFormatter(logging.Formatter('%(levelname)s %(message)s'))
-    # logger.addHandler(file_handler)
     logger.setLevel(level=log_level)
     logger.info("=> Test started at %s" % datetime.datetime.now())
 
