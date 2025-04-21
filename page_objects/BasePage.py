@@ -39,9 +39,7 @@ class BasePage:
         self.logger.info(f"Click element {locator}")
         element = self.get_element(locator)
         return self.wrapper_screenshot(
-            lambda: element.click(),
-            (ElementClickInterceptedException,)
-        )
+            lambda: element.click(), ElementClickInterceptedException)
 
     @allure.step('Ищу текст {text} в элементе: {locator}')
     def present_element(self, locator: tuple, text: str, timeout=5):
