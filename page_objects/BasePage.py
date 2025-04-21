@@ -1,7 +1,7 @@
 import allure
 import time
 import logging
-from selenium.common import TimeoutException
+from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -20,7 +20,7 @@ class BasePage:
             allure.attach(body=self.browser.get_screenshot_as_png(),
                           name=screenshot_name,
                           attachment_type=allure.attachment_type.PNG)
-            raise AssertionError(f"Ошибка: {e.__class__.__name__}")
+            raise AssertionError(f"Ошибка: {e.__class__.__name__} — {str(e)}")
 
     @allure.step('Открываю url: {url}')
     def get_url(self, url):
@@ -37,7 +37,11 @@ class BasePage:
     @allure.step('Кликаю на элемент: {locator}')
     def click_element(self, locator):
         self.logger.info(f"Click element {locator}")
-        self.get_element(locator).click()
+        element = self.get_element(locator)
+        return self.wrapper_screenshot(
+            lambda: element.click(),
+            (ElementClickInterceptedException,)
+        )
 
     @allure.step('Ищу текст {text} в элементе: {locator}')
     def present_element(self, locator: tuple, text: str, timeout=5):
