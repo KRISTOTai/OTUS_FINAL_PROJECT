@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
 import allure
+import time
 
 
 class Homepage(BasePage):
@@ -20,3 +21,8 @@ class Homepage(BasePage):
         desktops_link = self.get_element(self.DESCTOPS_NAV_PAN)
         mp3_link = self.get_element(self.MP3_NAV_PAN)
         return desktops_link, mp3_link
+
+    def scrolling_to_iphone(self):
+        self.scrolling_page(self.get_element(self.IPHONE_ITEM))
+        time.sleep(0.5)
+        self.click_element(self.IPHONE_ITEM)

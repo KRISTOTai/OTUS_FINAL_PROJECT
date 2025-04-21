@@ -1,3 +1,5 @@
+import time
+
 from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
 import allure
@@ -13,6 +15,7 @@ class Currency(BasePage):
     def get_elements_currency(self, locator):
         self.click_element(self.CARET_DOWN)
         self.click_element(locator)
+        time.sleep(0.5)
         return self.get_element(self.PRICE_ITEM)
 
 

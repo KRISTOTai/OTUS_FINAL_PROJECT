@@ -32,7 +32,7 @@ def browser(request):
 
     if browser_name in ["brave_local", "br_local", "br"]:
         brave_path = "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-        chromedriver_path = "C:/Users/Igoryan/.cache/selenium/chromedriver/win64/132.0.6834.159/chromedriver.exe"
+        chromedriver_path = "C:/Users/Igoryan/.cache/selenium/chromedriver/win64/134.0.6998.90/chromedriver.exe"
         # Настраиваем параметры для Brave
         options = ChromeOptions()
         options.binary_location = brave_path

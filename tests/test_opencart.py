@@ -108,7 +108,7 @@ def test_cart(browser, url_homepage):
     Homepage(browser).get_url(url_homepage)
     assert 'Store' in browser.title, f'Ожидался заголовок с надписью Store, а появился: {browser.title}'
 
-    Homepage(browser).click_element(Homepage.IPHONE_ITEM)
+    Homepage(browser).scrolling_to_iphone()
     Catalogpage(browser).get_elements_for_cart_catalogpg()
     ShoppingCart(browser).click_element(ShoppingCart.SHOP_CART_BUTTON)
     cart_item = Cart(browser).get_elements_cart()
