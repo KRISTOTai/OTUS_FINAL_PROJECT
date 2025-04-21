@@ -1,5 +1,7 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.service import Service as BraveService
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FFOptions
 import pytest
@@ -31,16 +33,14 @@ def browser(request):
     logger.info("=> Test started at %s" % datetime.datetime.now())
 
     if browser_name in ["brave_local", "br_local", "br"]:
-        brave_path = "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-        chromedriver_path = "C:/Users/Igoryan/.cache/selenium/chromedriver/win64/134.0.6998.90/chromedriver.exe"
         # Настраиваем параметры для Brave
         options = ChromeOptions()
-        options.binary_location = brave_path
         if headless:
             options.add_argument("--headless=new")
-        # Создаём экземпляр браузера
-        service = Service(chromedriver_path)
-        driver = webdriver.Chrome(service=service, options=options)
+        driver = webdriver.Chrome(
+            service=BraveService(
+                ChromeDriverManager(driver_version="135.0.7049.100", chrome_type=ChromeType.BRAVE).install()),
+            options=options)
     elif browser_name == "chrome":
         options = ChromeOptions()
         driver = remote_start(options, request)
