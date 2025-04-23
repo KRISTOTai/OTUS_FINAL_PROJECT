@@ -120,7 +120,12 @@ def db_info(request):
 
 
 @pytest.fixture(scope="session")
-def connection(db_info):
+def connection(db_info, request):
+    log_level = request.config.getoption("--log_level")
+
+    logger = logging.getLogger(request.node.name)
+    logger.setLevel(level=log_level)
+    logger.info("=> Test DB started at %s" % datetime.datetime.now())
     host, port, database, user, password = db_info
     conn = pymysql.connect(
         host=host,
@@ -131,3 +136,4 @@ def connection(db_info):
     )
     yield conn
     conn.close()
+    logger.info("=> Test DB finished at %s" % datetime.datetime.now())
