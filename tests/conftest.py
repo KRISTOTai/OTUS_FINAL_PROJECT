@@ -7,6 +7,7 @@ from selenium.webdriver.firefox.options import Options as FFOptions
 import pytest
 import logging
 import datetime
+import pymysql
 
 
 def pytest_addoption(parser):
@@ -20,6 +21,12 @@ def pytest_addoption(parser):
     parser.addoption("--logs", action="store_true")
     parser.addoption("--vnc", action="store_true")
     parser.addoption("--bv")
+
+    parser.addoption("--host", default="127.0.0.1")
+    parser.addoption("--port", default="3306")
+    parser.addoption("--database", default="bitnami_opencart", help="Info from docker-compose")
+    parser.addoption("--user", default="bn_opencart")
+    parser.addoption("--password", default="")
 
 
 @pytest.fixture()
@@ -99,3 +106,28 @@ def access():
     opencart_username = 'user'
     opencart_password = 'bitnami'
     return opencart_username, opencart_password
+
+
+@pytest.fixture(scope="session")
+def db_info(request):
+    return (
+        request.config.getoption("--host"),
+        int(request.config.getoption("--port")),
+        request.config.getoption("--database"),
+        request.config.getoption("--user"),
+        request.config.getoption("--password")
+    )
+
+
+@pytest.fixture(scope="session")
+def connection(db_info):
+    host, port, database, user, password = db_info
+    conn = pymysql.connect(
+        host=host,
+        port=port,
+        user=user,
+        password=password,
+        database=database
+    )
+    yield conn
+    conn.close()
