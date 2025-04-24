@@ -1,4 +1,5 @@
 import allure
+import pytest
 from page_objects.HomePage import Homepage
 from page_objects.CatalogPage import Catalogpage
 from page_objects.NavPanPage import Currency
@@ -84,6 +85,7 @@ def test_admin_auth(browser, access, url_homepage):
 @allure.epic('Page actions')
 @allure.feature('Handling with products')
 @allure.title('Add new product on a Adminpage')
+@pytest.mark.order(1)
 def test_add_item(browser, access, url_homepage):
     Adminpage(browser).get_auth_url(url_homepage)
     assert 'Administration' in browser.title, f'Ожидался заголовок с надписью Administration, а появился: {browser.title}'
@@ -94,6 +96,7 @@ def test_add_item(browser, access, url_homepage):
 @allure.epic('Page actions')
 @allure.feature('Handling with products')
 @allure.title('Delete product on a Adminpage')
+@pytest.mark.order(2)
 def test_delete_item(browser, access, url_homepage):
     Adminpage(browser).get_auth_url(url_homepage)
     assert 'Administration' in browser.title, f'Ожидался заголовок с надписью Administration, а появился: {browser.title}'
