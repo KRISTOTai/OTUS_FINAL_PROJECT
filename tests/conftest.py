@@ -13,6 +13,7 @@ import pymysql
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome")
     parser.addoption("--headless", action="store_true")
+    parser.addoption("--container", action="store_true")
     parser.addoption("--url", default="http://192.168.31.246:8081", help="HomePage OpenCart")
     parser.addoption("--log_level", action="store", default="INFO")
 
@@ -34,6 +35,7 @@ def browser(request):
     browser_name = request.config.getoption("--browser")
     headless = request.config.getoption("--headless")  # True - False
     log_level = request.config.getoption("--log_level")
+    container = request.config.getoption("--container")
 
     logger = logging.getLogger(request.node.name)
     logger.setLevel(level=log_level)
@@ -42,11 +44,12 @@ def browser(request):
     if browser_name in ["brave_local", "br_local", "br"]:
         # Настраиваем параметры для Brave
         options = ChromeOptions()
-        options.binary_location = "/usr/bin/brave-browser"
         if headless:
             options.add_argument("--headless=new")
             options.add_argument("--no-sandbox")  # Важно для Docker
             options.add_argument("--disable-dev-shm-usage")
+        if container:
+            options.binary_location = "/usr/bin/brave-browser"
         driver = webdriver.Chrome(
             service=BraveService(
                 ChromeDriverManager(driver_version="135.0.7049.100", chrome_type=ChromeType.BRAVE).install()),
