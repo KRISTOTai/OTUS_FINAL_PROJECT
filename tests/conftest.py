@@ -46,7 +46,7 @@ def browser(request):
             options.add_argument("--headless=new")
         driver = webdriver.Chrome(
             service=BraveService(
-                ChromeDriverManager(driver_version="135.0.7049.115", chrome_type=ChromeType.BRAVE).install()),
+                ChromeDriverManager(driver_version="135.0.7049.100", chrome_type=ChromeType.BRAVE).install()),
             options=options)
     elif browser_name == "chrome":
         options = ChromeOptions()

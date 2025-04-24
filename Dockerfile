@@ -1,10 +1,10 @@
 FROM python:3.12-slim
 
-# Установка curl и системных зависимостей
+# Установка зависимостей
 RUN apt-get update && apt-get install -y \
+    wget \
     curl \
     gnupg \
-    wget \
     unzip \
     libnss3 \
     libxss1 \
@@ -17,22 +17,19 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка Brave
-RUN curl -fsSL https://brave-browser-apt-release.s3.brave.com/brave-core.asc | gpg --dearmor -o /usr/share/keyrings/brave-browser-archive-keyring.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" \
-    > /etc/apt/sources.list.d/brave-browser-release.list && \
-    apt-get update && apt-get install -y brave-browser
+# Установка Brave версии 135.0.7049.100
+RUN wget -O /tmp/brave.zip https://github.com/brave/brave-browser/releases/download/v1.77.100/brave-browser-1.77.100-linux-amd64.zip&& \
+    unzip /tmp/brave.zip -d /opt/brave && \
+    ln -s /opt/brave/brave-browser /usr/bin/brave && \
+    rm /tmp/brave.zip
 
-# Установка зависимостей проекта
+# Установка Python зависимостей
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Создание рабочей директории
+# Копирование проекта
 WORKDIR /app
-
-# Копируем весь проект внутрь контейнера
 COPY . /app
 
-# Команда по умолчанию для запуска тестов
 ENTRYPOINT ["pytest"]
 CMD ["-v", "--alluredir=allure-results"]
