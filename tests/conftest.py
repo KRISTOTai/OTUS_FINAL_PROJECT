@@ -42,8 +42,11 @@ def browser(request):
     if browser_name in ["brave_local", "br_local", "br"]:
         # Настраиваем параметры для Brave
         options = ChromeOptions()
+        options.binary_location = "/usr/bin/brave-browser"
         if headless:
             options.add_argument("--headless=new")
+            options.add_argument("--no-sandbox")  # Важно для Docker
+            options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(
             service=BraveService(
                 ChromeDriverManager(driver_version="135.0.7049.100", chrome_type=ChromeType.BRAVE).install()),
