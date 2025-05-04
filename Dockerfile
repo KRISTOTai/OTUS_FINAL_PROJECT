@@ -15,9 +15,10 @@ RUN apt-get update && apt-get install -y \
     libu2f-udev \
     libvulkan1 \
     xdg-utils \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
-# Устанавливаем Brave правильно
+# Устанавливаем Brave
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     curl \
@@ -38,5 +39,4 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 WORKDIR /app
 COPY . /app
 
-ENTRYPOINT ["pytest"]
-CMD ["-v", "--alluredir=allure-results"]
+CMD ["pytest", "-v", "--host=mariadb", "--url=http://opencart:8080", "--alluredir=allure-results", "--headless", "--browser=br", "--container"]
