@@ -5,6 +5,7 @@ import pytest
 
 @allure.epic('DB actions')
 @allure.title('Check table')
+@pytest.mark.order(1)
 def test_check_table(connection):
     db = UsersDB()
     db.print_all_customers(connection)
@@ -13,7 +14,7 @@ def test_check_table(connection):
 @allure.epic('DB actions')
 @allure.feature('Create_user')
 @allure.title('Create_new_user')
-@pytest.mark.order(1)
+@pytest.mark.order(2)
 def test_create_new_user(connection):
     new_user_id = UsersDB().create_new_user(connection)
 
@@ -26,7 +27,7 @@ def test_create_new_user(connection):
 @allure.epic('DB actions')
 @allure.feature('Create_user')
 @allure.title('Update_new_user')
-@pytest.mark.order(2)
+@pytest.mark.order(3)
 def test_update_new_user(connection):
     user_before_update = UsersDB().amount_users(connection).get("last_row")
     last_row_id = UsersDB().update_user(connection)
@@ -38,7 +39,7 @@ def test_update_new_user(connection):
 @allure.epic('DB actions')
 @allure.feature('Delete_user')
 @allure.title('Delete_last_user')
-@pytest.mark.order(3)
+@pytest.mark.order(4)
 def test_delete_last_user(connection):
     amount_users_before = UsersDB().amount_users(connection).get("length")
     amount_users_after = UsersDB().delete_user(connection)

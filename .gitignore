@@ -8,7 +8,8 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-аDockerfile
+.idea/
+ignorefiles/
 allure-results/
 build/
 develop-eggs/
