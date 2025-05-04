@@ -1,0 +1,12 @@
+{
+  "browsers": {
+    "chrome": {
+      "default": 5,
+      "maxInstances": 10
+    },
+    "firefox": {
+      "default": 5,
+      "maxInstances": 10
+    }
+  }
+}

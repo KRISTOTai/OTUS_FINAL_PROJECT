@@ -1,0 +1,115 @@
+services:
+  phpadmin:
+    image: 'phpmyadmin/phpmyadmin:latest'
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306
+      - PMA_USER=bn_opencart
+      - PMA_PASSWORD=bitnami123      
+    ports:
+      - '${PHPADMIN_PORT:-8888}:80'
+    networks:
+      - default
+
+  mariadb:
+    image: docker.io/bitnami/mariadb:11.2
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=bn_opencart
+      - MARIADB_PASSWORD=bitnami123      
+      - MARIADB_DATABASE=bitnami_opencart
+    ports:
+      - '3306:3306'
+    networks:
+      - default
+
+  opencart:
+    image: bitnami/opencart:4.0.2-3-debian-12-r33
+    ports:
+      - '${OPENCART_PORT:-8081}:8080'
+      - '8443:8443'
+    environment:
+      - OPENCART_HOST=192.168.31.246:${OPENCART_PORT:-8081}
+      - OPENCART_DATABASE_HOST=mariadb
+      - OPENCART_DATABASE_PORT_NUMBER=3306
+      - OPENCART_DATABASE_USER=bn_opencart
+      - OPENCART_DATABASE_NAME=bitnami_opencart
+      - OPENCART_DATABASE_PASSWORD=bitnami123      
+      - ALLOW_EMPTY_PASSWORD=yes
+    depends_on:
+      - mariadb
+    networks:
+      - default
+
+  selenoid1:
+    image: aerokube/selenoid:latest-release
+    command: ["-limit", "4", "-container-network", "selenoid"]
+    volumes:
+      - ./configs/browsers.json:/etc/selenoid/browsers.json
+      - /var/run/docker.sock:/var/run/docker.sock
+    expose:
+      - "4444"
+    networks:
+      - default
+
+  selenoid2:
+    image: aerokube/selenoid:latest-release
+    command: ["-limit", "4", "-container-network", "selenoid"]
+    volumes:
+      - ./configs/browsers.json:/etc/selenoid/browsers.json
+      - /var/run/docker.sock:/var/run/docker.sock
+    expose:
+      - "4444"
+    networks:
+      - default
+
+  ggr:
+    image: aerokube/ggr:latest
+    ports:
+      - "4444:4444"
+    volumes:
+      - ./configs:/etc/grid-router:ro
+    depends_on:
+      - selenoid1
+      - selenoid2
+    networks:
+      - default
+
+  ggr-ui:
+    image: aerokube/ggr-ui:latest
+    ports:
+      - "8082:8080"
+    environment:
+      - GGR_HOST=ggr
+    depends_on:
+      - ggr
+    networks:
+      - default
+
+  selenoid-ui:
+    image: aerokube/selenoid-ui:latest-release
+    ports:
+      - "8083:8080"
+    environment:
+      - SELENOID_URI=http://ggr:4444
+    depends_on:
+      - ggr-ui
+    networks:
+      - default
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - opencart
+      - ggr
+    volumes:
+      - .:/app
+    networks:
+      - default
+
+networks:
+  default:
+    name: selenoid
+    external: true
