@@ -34,7 +34,7 @@ services:
       - '${OPENCART_PORT:-8081}:8080'
       - '8443:8443'
     environment:
-      - OPENCART_HOST=opencart:8080  
+      - OPENCART_HOST=opencart:8080
       - OPENCART_DATABASE_HOST=mariadb
       - OPENCART_DATABASE_PORT_NUMBER=3306
       - OPENCART_DATABASE_USER=bn_opencart
@@ -53,7 +53,7 @@ services:
       opencart:
         condition: service_healthy
     entrypoint: ["sh", "-c", "while ! nc -z opencart 8080; do sleep 1; done; exec $$@", "--"]
-    command: ["pytest", "-v", "--host=mariadb", "--url=http://opencart:8080", "--alluredir=allure-results", "--headless", "--browser=br", "--container"]
+    command: ["pytest", "-v", "--host=mariadb", "--url=http://opencart:8080", "--alluredir=allure-results"]
     networks:
       - selenoid
 
