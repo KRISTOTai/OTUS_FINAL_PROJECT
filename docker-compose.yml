@@ -20,8 +20,6 @@ services:
       - '3306:3306'
     networks:
       - selenoid
-    volumes:
-      - mariadb_data:/bitnami/mariadb
 
   opencart:
     image: bitnami/opencart:4.0.2-3-debian-12-r33
@@ -56,10 +54,6 @@ services:
     command: ["pytest", "-v", "--host=mariadb", "--url=http://opencart:8080", "--alluredir=allure-results"]
     networks:
       - selenoid
-
-volumes:
-  mariadb_data:
-    driver: local
 
 networks:
   selenoid:
