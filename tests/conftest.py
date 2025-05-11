@@ -79,7 +79,7 @@ def remote_start(options, request):
     vnc = request.config.getoption("--vnc")
     caps = {
         "browserName": browser_name,
-        # "browserVersion": version,
+        "browserVersion": version,
         "selenoid:options": {
             "enableVNC": vnc,
             "name": request.node.name,
