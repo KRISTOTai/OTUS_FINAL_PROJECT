@@ -30,7 +30,7 @@ def pytest_addoption(parser):
     parser.addoption("--password", default="")
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def browser(request):
     browser_name = request.config.getoption("--browser")
     headless = request.config.getoption("--headless")  # True - False
@@ -114,7 +114,7 @@ def access():
     return opencart_username, opencart_password
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def db_info(request):
     return (
         request.config.getoption("--host"),
@@ -125,7 +125,7 @@ def db_info(request):
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def connection(db_info, request):
     log_level = request.config.getoption("--log_level")
 
