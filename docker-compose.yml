@@ -57,7 +57,7 @@ services:
       - "-service-startup-timeout"
       - "2m"
     volumes:
-      - ./configs/browsers.json:/etc/selenoid/browsers.json
+      - /var/jenkins_home/workspace/Job_Opencart_test/configs/browsers.json:/etc/selenoid/browsers.json:ro
       - /var/run/docker.sock:/var/run/docker.sock
     expose:
       - "4444"
