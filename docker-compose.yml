@@ -52,8 +52,8 @@ services:
     volumes:
       - ./configs/browsers.json:/etc/selenoid/browsers.json
       - /var/run/docker.sock:/var/run/docker.sock
-    expose:
-      - "4444"
+    ports:
+      - "4444:4444"
     networks:
       - selenoid
 
