@@ -49,7 +49,7 @@ services:
     image: aerokube/selenoid:latest-release
     command: ["-limit", "10", "-container-network", "selenoid"]
     volumes:
-      - $WORKSPACE/configs/browsers.json/configs/browsers.json:/etc/selenoid/browsers.json
+      - ./configs/browsers.json/:/etc/selenoid/browsers.json
       - /var/run/docker.sock:/var/run/docker.sock
     expose:
       - "4444"
@@ -59,7 +59,7 @@ services:
   selenoid-ui:
     image: aerokube/selenoid-ui:latest-release
     ports:
-      - "8080:8083"
+      - "8083:8080"
     environment:
       - SELENOID_URI=http://selenoid1:4444
     depends_on:
