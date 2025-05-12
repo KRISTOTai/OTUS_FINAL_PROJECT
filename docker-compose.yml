@@ -47,15 +47,8 @@ services:
 
   selenoid1:
     image: aerokube/selenoid:latest-release
-    command: 
-      - "-limit"
-      - "10" 
-      - "-container-network"
-      - "selenoid"
-      - "-timeout"
-      - "2m"
-      - "-service-startup-timeout"
-      - "2m"
+    entrypoint: ["sh", "-c", "/usr/bin/selenoid $$@ && ls -la /etc/selenoid", "--"]
+    command: ["-limit", "10", "-conf", "/etc/selenoid/browsers.json"]
     volumes:
       - ./configs/browsers.json:/etc/selenoid/browsers.json
       - /var/run/docker.sock:/var/run/docker.sock
