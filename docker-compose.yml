@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   phpadmin:
     image: 'phpmyadmin/phpmyadmin:latest'
@@ -48,15 +46,16 @@ services:
       - selenoid
 
   selenoid1:
-    image: aerokube/selenoid:1.10.7
+    image: aerokube/selenoid:latest-release
     command: 
-      - sh
-      - -c
-      - |
-        # Запускаем Selenoid в фоне
-        /usr/bin/selenoid -limit 10 -container-network selenoid -timeout 2m &
-        # "Якорь" - бесконечное ожидание
-        tail -f /dev/null
+      - "-limit"
+      - "10" 
+      - "-container-network"
+      - "selenoid"
+      - "-timeout"
+      - "2m"
+      - "-service-startup-timeout"
+      - "2m"
     volumes:
       - ./configs/browsers.json:/etc/selenoid/browsers.json
       - /var/run/docker.sock:/var/run/docker.sock
