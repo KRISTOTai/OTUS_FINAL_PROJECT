@@ -45,6 +45,28 @@ services:
     networks:
       - selenoid
 
+  selenoid1:
+    image: aerokube/selenoid:latest-release
+    command: ["-limit", "10", "-container-network", "selenoid"]
+    volumes:
+      - ./configs/browsers.json:/etc/selenoid/browsers.json
+      - /var/run/docker.sock:/var/run/docker.sock
+    expose:
+      - "4444"
+    networks:
+      - selenoid
+
+  selenoid-ui:
+    image: aerokube/selenoid-ui:latest-release
+    ports:
+      - "8080:8083"
+    environment:
+      - SELENOID_URI=http://selenoid1:4444
+    depends_on:
+      - selenoid1
+    networks:
+      - selenoid
+      
   tests:
     build:
       context: .
@@ -52,8 +74,12 @@ services:
     depends_on:
       opencart:
         condition: service_healthy
+      selenoid-ui:
+        condition: service_started
+      phpadmin:
+        condition: service_started
     entrypoint: ["sh", "-c", "while ! nc -z opencart 8080; do sleep 1; done; exec $$@", "--"]
-    command: ["pytest", "-v", "--host=mariadb", "--url=http://opencart:8080", "--alluredir=allure-results"]
+    command: ["pytest", "-v", "--host=mariadb", "--url=http://opencart:8080", "--alluredir=allure-results", "--executor=selenoid1"]
     networks:
       - selenoid
 
@@ -63,5 +89,4 @@ volumes:
 
 networks:
   selenoid:
-    external: true
     name: selenoid
