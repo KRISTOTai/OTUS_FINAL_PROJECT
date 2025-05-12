@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   phpadmin:
     image: 'phpmyadmin/phpmyadmin:latest'
@@ -46,7 +48,7 @@ services:
       - selenoid
 
   selenoid1:
-    image: aerokube/selenoid:latest-release
+    image: aerokube/selenoid:1.10.7
     command: 
       - sh
       - -c
@@ -56,7 +58,7 @@ services:
         # "Якорь" - бесконечное ожидание
         tail -f /dev/null
     volumes:
-      - ${PWD}/configs/browsers.json:/etc/selenoid/browsers.json:ro
+      - ./configs/browsers.json:/etc/selenoid/browsers.json
       - /var/run/docker.sock:/var/run/docker.sock
     expose:
       - "4444"
