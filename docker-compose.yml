@@ -48,14 +48,13 @@ services:
   selenoid1:
     image: aerokube/selenoid:latest-release
     command: 
-      - "-limit"
-      - "10" 
-      - "-container-network"
-      - "selenoid"
-      - "-timeout"
-      - "2m"
-      - "-service-startup-timeout"
-      - "2m"
+      - sh
+      - -c
+      - |
+        # Запускаем Selenoid в фоне
+        /usr/bin/selenoid -limit 10 -container-network selenoid -timeout 2m &
+        # "Якорь" - бесконечное ожидание
+        tail -f /dev/null
     volumes:
       - ${PWD}/configs/browsers.json:/etc/selenoid/browsers.json:ro
       - /var/run/docker.sock:/var/run/docker.sock
