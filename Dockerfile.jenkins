@@ -10,27 +10,20 @@ RUN apt-get update && \
     curl \
     gnupg \
     unzip \
-    lsb-release \
-    software-properties-common \
+	lsb-release \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка Docker CLI и Docker Compose
-RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+# Установка Docker CLI
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
     echo \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
     https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
     > /etc/apt/sources.list.d/docker.list && \
     apt-get update && \
-    apt-get install -y docker-ce-cli docker-compose-plugin
+    apt-get install -y docker-ce-cli
 
-# Создаем симлинк для docker-compose
-RUN ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/bin/docker-compose
+# Установка Docker Compose v2
+RUN curl -SL https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose && \
+    chmod +x /usr/local/bin/docker-compose
 
-# Настройка прав доступа
-RUN groupadd -g 998 docker && \
-    usermod -aG docker jenkins && \
-    chmod 666 /var/run/docker.sock
-
-# Возвращаемся к пользователю jenkins
-USER jenkins
+RUN groupadd docker && usermod -aG docker jenkins

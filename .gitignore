@@ -10,7 +10,6 @@ __pycache__/
 .Python
 .idea/
 ignorefiles/
-allure-results/
 build/
 develop-eggs/
 dist/
