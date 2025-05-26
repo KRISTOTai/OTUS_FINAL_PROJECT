@@ -47,7 +47,7 @@ services:
     image: aerokube/selenoid:latest-release
     command: ["-limit", "10", "-container-network", "selenoid"]
     volumes:
-      - ./configs/browsers.json/:/etc/selenoid/browsers.json
+      - ./configs/browsers.json:/etc/selenoid/browsers.json
       - /var/run/docker.sock:/var/run/docker.sock
     expose:
       - "4444"
@@ -64,22 +64,28 @@ services:
       - selenoid1
     networks:
       - selenoid
-      
-  tests:
+ 
+  jenkins1:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.jenkins
+    user: root
+    ports:
+      - "8085:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       opencart:
-        condition: service_healthy
-      selenoid-ui:
-        condition: service_started
-      phpadmin:
-        condition: service_started
-    entrypoint: ["sh", "-c", "while ! nc -z opencart 8080; do sleep 1; done; exec $$@", "--"]
-    command: ["pytest", "-v", "--host=mariadb", "--url=http://opencart:8080", "--alluredir=allure-results", "--executor=selenoid1"]
+        condition: service_healthy  
     networks:
       - selenoid
+
+volumes:
+  mariadb_data:
+    driver: local
+  jenkins_home:
 
 networks:
   selenoid:
