@@ -10,6 +10,7 @@ class Registrationpage(BasePage):
     FIRST_NAME = (By.XPATH, "//div[@class='col-sm-10']/input[@name='firstname' and @class='form-control']")
     LAST_NAME = (By.CSS_SELECTOR, "[id = 'input-lastname']")
     EMAIL = (By.CSS_SELECTOR, "[id = 'input-email']")
+    EMAIL_FAIL = (By.CSS_SELECTOR, "[id = 'input-demail']")
     PAS = (By.XPATH, "//div[@class='col-sm-10']/input[@name='password' and @class='form-control']")
     CONTINUE_BUTTON = (By.XPATH, "//button[@type='submit' and @class='btn btn-primary']")
     PRIVATE_POLICY_BUTTON = (By.CSS_SELECTOR, "input.form-check-input[name = 'agree']")
@@ -46,13 +47,9 @@ class Registrationpage(BasePage):
         self.click_element(self.CONTINUE_BUTTON)
         time.sleep(1)
 
-    @allure.step('Заполнение полей при регистрации')
+    @allure.step('Заполнение полей при регистрации(fail)')
     def set_elements_new_reg_fail(self):
         first_name, lastname, email = self.random_values()
         self.get_element(self.FIRST_NAME).send_keys(first_name)
         self.get_element(self.LAST_NAME).send_keys(lastname)
-        self.get_element(self.EMAIL).send_keys(email)
-        self.get_element(self.PAS).send_keys('123456')
-        self.scrolling_page(self.get_element(self.PRIVATE_POLICY_BUTTON))
-        self.click_element(self.PRIVATE_POLICY_BUTTON)
-        self.click_element(self.CONTINUE_BUTTON)
+        self.get_element(self.EMAIL_FAIL).send_keys(email)
