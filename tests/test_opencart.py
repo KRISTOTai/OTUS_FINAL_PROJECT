@@ -107,3 +107,14 @@ def test_currency(browser, url_homepage):
     Catalogpage(browser).get_catalog_url(url_homepage)
     change_price_gbp = Currency(browser).get_elements_currency(Currency.GBP)
     assert '£' in change_price_gbp.text, f'Ожидалась валюта £, а появилась: {change_price_gbp.text}'
+
+
+@allure.epic('Page actions')
+@allure.feature('Registration')
+@allure.title('Registration of new user fail for screenshot')
+def test_reg_new_user_fail(browser, url_homepage):
+    Registrationpage(browser).get_reg_url(url_homepage)
+    assert 'Register Account' in browser.title, f'Ожидался заголовок с надписью Register Account, а появился: {browser.title}'
+
+    Registrationpage(browser).set_elements_new_reg_fail()
+    assert 'Your Account Has Been Created!' in browser.title, f'Ожидалась страница подтверждения аккаунта, а появилась {browser.title}'

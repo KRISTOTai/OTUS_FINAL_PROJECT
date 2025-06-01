@@ -45,3 +45,14 @@ class Registrationpage(BasePage):
         time.sleep(0.5)
         self.click_element(self.CONTINUE_BUTTON)
         time.sleep(1)
+
+    @allure.step('Заполнение полей при регистрации')
+    def set_elements_new_reg_fail(self):
+        first_name, lastname, email = self.random_values()
+        self.get_element(self.FIRST_NAME).send_keys(first_name)
+        self.get_element(self.LAST_NAME).send_keys(lastname)
+        self.get_element(self.EMAIL).send_keys(email)
+        self.get_element(self.PAS).send_keys('123456')
+        self.scrolling_page(self.get_element(self.PRIVATE_POLICY_BUTTON))
+        self.click_element(self.PRIVATE_POLICY_BUTTON)
+        self.click_element(self.CONTINUE_BUTTON)
