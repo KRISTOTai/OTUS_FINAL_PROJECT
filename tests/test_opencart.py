@@ -1,4 +1,5 @@
 import allure
+import pytest
 from page_objects.HomePage import Homepage
 from page_objects.CatalogPage import Catalogpage
 from page_objects.NavPanPage import Currency
@@ -112,6 +113,7 @@ def test_currency(browser, url_homepage):
 @allure.epic('Page actions')
 @allure.feature('Registration')
 @allure.title('Registration of new user fail for screenshot')
+@pytest.mark.xfail(reason="Негативный тест для проверки скриншотов и отчёта")
 def test_reg_new_user_fail(browser, url_homepage):
     Registrationpage(browser).get_reg_url(url_homepage)
     assert 'Register Account' in browser.title, f'Ожидался заголовок с надписью Register Account, а появился: {browser.title}'
