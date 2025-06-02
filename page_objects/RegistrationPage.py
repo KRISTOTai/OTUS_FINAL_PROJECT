@@ -45,7 +45,7 @@ class Registrationpage(BasePage):
         self.click_element(self.PRIVATE_POLICY_BUTTON)
         time.sleep(0.5)
         self.click_element(self.CONTINUE_BUTTON)
-        time.sleep(1)
+        time.sleep(1.5)
 
     @allure.step('Заполнение полей при регистрации(fail)')
     def set_elements_new_reg_fail(self):
