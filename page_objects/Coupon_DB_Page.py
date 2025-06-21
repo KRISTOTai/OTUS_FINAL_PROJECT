@@ -19,5 +19,5 @@ class CouponsDB(BasePageDB):
         return self.get_by_id(connection, row_id, self.TABLE, self.COLUMN_NAME)
 
     @allure.step('Удаляю последний купон')
-    def delete_coupon(self, connection):
-        return self.delete_row(connection, self.TABLE, self.COLUMN_NAME)
+    def delete_coupon(self, connection, row_id):
+        return self.delete_row(connection, row_id, self.TABLE, self.COLUMN_NAME)

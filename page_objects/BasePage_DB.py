@@ -130,7 +130,7 @@ class BasePageDB:
         params = params + (id_coupon,)
         with connection.cursor() as cursor:
             sql = """
-                    UPDATE oc_customer SET
+                    UPDATE oc_coupon SET
                         name = %s,
                         code = %s,
                         discount = %s,
@@ -143,16 +143,17 @@ class BasePageDB:
         return {"id_coupon": id_coupon, "rowcount": cursor.rowcount}
 
     @allure.step('Изменяю период действия последнего купона')
-    def update_coupon_period(self, connection, params):
-        id_coupon = self.amount_rows(connection, table="oc_coupon").get('last_row')[0]
+    def update_coupon_period(self, connection, params, id_coupon):
+        if id_coupon is None:
+            id_coupon = self.amount_rows(connection, table="oc_coupon").get('last_row')[0]
         allure.dynamic.description(f"id : {id_coupon}")
         params = params + (id_coupon,)
         with connection.cursor() as cursor:
             sql = """
-                    UPDATE oc_customer SET
+                    UPDATE oc_coupon SET
                         code = %s,
                         uses_total = %s,
-                        uses_customers = %s,
+                        uses_customer = %s,
                         date_end= %s
                     WHERE coupon_id = %s
                     """
@@ -161,7 +162,7 @@ class BasePageDB:
             self.logger.info(f"Изменен период действия на купоне с ID: {id_coupon}")
         return {"id_coupon": id_coupon, "rowcount": cursor.rowcount}
 
-    def delete_row(self, connection, table, column_name, row_id):
+    def delete_row(self, connection, row_id, table, column_name):
         # Вот такое приседание, потому что бд после удаления записи, создает новую строку с id + 1 от старого
         if row_id is None:
             row_id = self.amount_rows(connection, table).get('last_row')[0]
@@ -169,5 +170,5 @@ class BasePageDB:
             sql = f'DELETE FROM {table} WHERE {column_name} = %s;'
             cursor.execute(sql, (row_id,))
             connection.commit()
-            self.logger.info(f"Удалён пользователь с ID: {row_id}")
+            self.logger.info(f"Удалёние пользователя с ID: {row_id}")
         return self.amount_rows(connection, table).get('length')
