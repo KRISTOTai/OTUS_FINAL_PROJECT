@@ -1,4 +1,4 @@
-from page_objects.users_DB_Page import UsersDB
+from page_objects.Users_DB_Page import UsersDB
 import allure
 
 

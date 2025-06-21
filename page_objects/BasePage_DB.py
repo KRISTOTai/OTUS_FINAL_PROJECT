@@ -4,7 +4,7 @@ import allure
 import logging
 
 
-class UsersDB:
+class BasePageDB:
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
     handler = logging.StreamHandler()
@@ -12,10 +12,9 @@ class UsersDB:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    @allure.step('Вывожу всех пользователей')
-    def print_all_customers(self, connection):
+    def print_all(self, connection, table):
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM oc_customer")
+            cursor.execute(f'SELECT * FROM {table}')
             columns = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
             row_count = len(rows)
@@ -26,13 +25,12 @@ class UsersDB:
             self.logger.info(f"Количество строк: {row_count}")
             allure.attach(str(row_count), name="Количество строк", attachment_type=allure.attachment_type.TEXT)
 
-    @allure.step('Подсчитываю количество строк и возвращаю последнюю')
-    def amount_users(self, connection):
+    def amount_rows(self, connection, table):
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM oc_customer")
+            cursor.execute(f'SELECT * FROM {table}')
             rows = cursor.fetchall()
             last_row = rows[-1] if rows else None
-            self.logger.info(f"Всего пользователей: {len(rows)}")
+            self.logger.info(f"Всего строк: {len(rows)}")
             return {"length": len(rows), "last_row": last_row}
 
     @allure.step('Генерирую случайные данные для пользователя')
@@ -70,18 +68,43 @@ class UsersDB:
             self.logger.info(f"Добавлен пользователь с ID: {user_id}")
             return user_id
 
-    @allure.step('Получаю пользователя по ID: {user_id}')
-    def get_user_by_id(self, user_id, connection):
+    @allure.step('Создаю новый купон')
+    def create_new_coupon(self, connection, params):
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        params = params + (now,)
         with connection.cursor() as cursor:
-            sql = "SELECT * FROM oc_customer WHERE customer_id = %s"
-            cursor.execute(sql, (user_id,))
+            sql = """
+                INSERT INTO oc_coupon (
+                    name, code, type, discount,
+                    logged, shipping, total,
+                    date_start, date_end,
+                    uses_total, uses_customer,
+                    status, date_added
+                ) VALUES (
+                    %s, %s, %s, %s,
+                    0, 0, %s,
+                    %s, %s,
+                    %s, %s,
+                    0, %s
+                )
+            """
+            cursor.execute(sql, params)
+            connection.commit()
+            coupon_id = cursor.lastrowid
+            self.logger.info(f"Добавлен купон с ID: {coupon_id}")
+            return coupon_id
+
+    def get_by_id(self, connection, row_id, table, column_name):
+        with connection.cursor() as cursor:
+            sql = f'SELECT * FROM {table} WHERE {column_name} = %s'
+            cursor.execute(sql, (row_id,))
             row = cursor.fetchone()
-            self.logger.info(f"Получен пользователь: {" | ".join(str(col) for col in row)}")
+            self.logger.info(f"Получена строка: {" | ".join(str(col) for col in row)}")
             return {"columns": [desc[0] for desc in cursor.description], "value": row}
 
     @allure.step('Обновляю данные последнего пользователя')
     def update_user(self, connection):
-        id_user = self.amount_users(connection).get('last_row')[0]
+        id_user = self.amount_rows(connection, table="oc_customer").get('last_row')[0]
         allure.dynamic.description(f"id : {id_user}")
         first_name, last_name, email, telephone, _ = self.gen_random_users()
         with connection.cursor() as cursor:
@@ -98,13 +121,16 @@ class UsersDB:
             self.logger.info(f"Обновлён пользователь с ID: {id_user}")
         return id_user
 
-    @allure.step('Удаляю последнего пользователя')
-    def delete_user(self, connection):
-        # Вот такое приседание, потому, что бд после удаления записи, создает нового пользователя с id + 1 от старого
-        id_user = self.amount_users(connection).get('last_row')[0]
+    @allure.step('Обновляю данные последнего купона')
+    def update_coupon(self, connection):
+        pass
+
+    def delete_row(self, connection, table, column_name):
+        # Вот такое приседание, потому что бд после удаления записи, создает новую строку с id + 1 от старого
+        id_user = self.amount_rows(connection, table).get('last_row')[0]
         with connection.cursor() as cursor:
-            sql = "DELETE FROM oc_customer WHERE customer_id = %s;"
+            sql = f'DELETE FROM {table} WHERE {column_name} = %s;'
             cursor.execute(sql, (id_user,))
             connection.commit()
             self.logger.info(f"Удалён пользователь с ID: {id_user}")
-        return self.amount_users(connection).get('length')
+        return self.amount_rows(connection, table).get('length')
