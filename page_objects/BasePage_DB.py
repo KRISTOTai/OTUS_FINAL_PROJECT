@@ -103,8 +103,9 @@ class BasePageDB:
             return {"columns": [desc[0] for desc in cursor.description], "value": row}
 
     @allure.step('Обновляю данные последнего пользователя')
-    def update_user(self, connection):
-        id_user = self.amount_rows(connection, table="oc_customer").get('last_row')[0]
+    def update_user(self, connection, id_user):
+        if id_user is None:
+            id_user = self.amount_rows(connection, table="oc_customer").get('last_row')[0]
         allure.dynamic.description(f"id : {id_user}")
         first_name, last_name, email, telephone, _ = self.gen_random_users()
         with connection.cursor() as cursor:
@@ -119,18 +120,54 @@ class BasePageDB:
             cursor.execute(sql, (first_name, last_name, email, telephone, id_user))
             connection.commit()
             self.logger.info(f"Обновлён пользователь с ID: {id_user}")
-        return id_user
+        return {"id_user": id_user, "rowcount": cursor.rowcount}
 
-    @allure.step('Обновляю данные последнего купона')
-    def update_coupon(self, connection):
-        pass
+    @allure.step('Изменяю скидку последнего купона')
+    def update_coupon_discount(self, connection, params, id_coupon):
+        if id_coupon is None:
+            id_coupon = self.amount_rows(connection, table="oc_coupon").get('last_row')[0]
+        allure.dynamic.description(f"id : {id_coupon}")
+        params = params + (id_coupon,)
+        with connection.cursor() as cursor:
+            sql = """
+                    UPDATE oc_customer SET
+                        name = %s,
+                        code = %s,
+                        discount = %s,
+                        total= %s
+                    WHERE coupon_id = %s
+                    """
+            cursor.execute(sql, params)
+            connection.commit()
+            self.logger.info(f"Изменена скидка на купоне с ID: {id_coupon}")
+        return {"id_coupon": id_coupon, "rowcount": cursor.rowcount}
 
-    def delete_row(self, connection, table, column_name):
+    @allure.step('Изменяю период действия последнего купона')
+    def update_coupon_period(self, connection, params):
+        id_coupon = self.amount_rows(connection, table="oc_coupon").get('last_row')[0]
+        allure.dynamic.description(f"id : {id_coupon}")
+        params = params + (id_coupon,)
+        with connection.cursor() as cursor:
+            sql = """
+                    UPDATE oc_customer SET
+                        code = %s,
+                        uses_total = %s,
+                        uses_customers = %s,
+                        date_end= %s
+                    WHERE coupon_id = %s
+                    """
+            cursor.execute(sql, params)
+            connection.commit()
+            self.logger.info(f"Изменен период действия на купоне с ID: {id_coupon}")
+        return {"id_coupon": id_coupon, "rowcount": cursor.rowcount}
+
+    def delete_row(self, connection, table, column_name, row_id):
         # Вот такое приседание, потому что бд после удаления записи, создает новую строку с id + 1 от старого
-        id_user = self.amount_rows(connection, table).get('last_row')[0]
+        if row_id is None:
+            row_id = self.amount_rows(connection, table).get('last_row')[0]
         with connection.cursor() as cursor:
             sql = f'DELETE FROM {table} WHERE {column_name} = %s;'
-            cursor.execute(sql, (id_user,))
+            cursor.execute(sql, (row_id,))
             connection.commit()
-            self.logger.info(f"Удалён пользователь с ID: {id_user}")
+            self.logger.info(f"Удалён пользователь с ID: {row_id}")
         return self.amount_rows(connection, table).get('length')

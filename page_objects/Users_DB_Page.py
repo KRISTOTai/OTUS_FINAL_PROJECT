@@ -19,5 +19,5 @@ class UsersDB(BasePageDB):
         return self.get_by_id(connection, row_id, self.TABLE, self.COLUMN_NAME)
 
     @allure.step('Удаляю последнего пользователя')
-    def delete_user(self, connection):
-        return self.delete_row(connection, self.TABLE, self.COLUMN_NAME)
+    def delete_user(self, connection, row_id):
+        return self.delete_row(connection, self.TABLE, self.COLUMN_NAME, row_id)

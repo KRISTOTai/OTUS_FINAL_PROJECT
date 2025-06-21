@@ -33,7 +33,7 @@ def test_create_new_user(connection):
 @pytest.mark.order(3)
 def test_update_new_user(connection):
     user_before_update = UsersDB().amount_users(connection).get("last_row")
-    last_row_id = UsersDB().update_user(connection)
+    last_row_id = UsersDB().update_user(connection, id_user=None).get("id_user")
     user_after_update = UsersDB().get_user_by_id(connection, last_row_id).get("value")
     assert user_before_update[4] != user_after_update[4], f"Имена после апдейта совпали"
     assert user_before_update[5] != user_after_update[5], f"Фамилии после апдейта совпали"
@@ -46,5 +46,5 @@ def test_update_new_user(connection):
 @pytest.mark.order(4)
 def test_delete_last_user(connection):
     amount_users_before = UsersDB().amount_users(connection).get("length")
-    amount_users_after = UsersDB().delete_user(connection)
+    amount_users_after = UsersDB().delete_user(connection, row_id=None)
     assert amount_users_before - 1 == amount_users_after, f'Количество пользователей не стало меньше после удаления'
