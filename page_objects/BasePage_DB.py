@@ -68,8 +68,7 @@ class BasePageDB:
             self.logger.info(f"Добавлен пользователь с ID: {user_id}")
             return user_id
 
-    @allure.step('Создаю новый купон')
-    def create_new_coupon(self, connection, params):
+    def create_new_coupons(self, connection, params):
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         params = params + (now,)
         with connection.cursor() as cursor:
@@ -154,7 +153,7 @@ class BasePageDB:
                         code = %s,
                         uses_total = %s,
                         uses_customer = %s,
-                        date_end= %s
+                        date_end = %s
                     WHERE coupon_id = %s
                     """
             cursor.execute(sql, params)

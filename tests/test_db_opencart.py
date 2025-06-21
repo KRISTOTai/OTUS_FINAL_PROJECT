@@ -53,7 +53,7 @@ def test_update_coupon_discount_neg(connection, name, code, discount, total):
 @allure.feature('Create_coupon')
 @allure.title('Update_coupon_neg')
 @pytest.mark.parametrize(("code", "uses_total", "uses_customer", "date_end"),
-                         [(999, 15, 15, "2026-01-01"), (888, 150, 150, "2027-01-01")], ids=[tuple, tuple])
+                         [(9990, 15, 15, "2026-01-01"), (8880, 150, 150, "2027-01-01")], ids=[tuple, tuple])
 def test_update_coupon_period_neg(connection, code, uses_total, uses_customer, date_end):
     params = (code, uses_total, uses_customer, date_end)
     non_existent_id = 999999  # несуществующий ID

@@ -5,10 +5,15 @@ from .BasePage_DB import BasePageDB
 class CouponsDB(BasePageDB):
     TABLE = "oc_coupon"
     COLUMN_NAME = "coupon_id"
+    PARAMS = ("20% Discount", 5555, "F", 20.0, 20.0, "2025-11-11", "2026-11-11", 100, 100)
 
     @allure.step('Вывожу все доступные купоны')
     def print_all_coupons(self, connection):
         self.print_all(connection, self.TABLE)
+
+    @allure.step('Создаю новый купон')
+    def create_new_coupon(self, connection):
+        return self.create_new_coupons(connection, self.PARAMS)
 
     @allure.step('Подсчитываю количество строк и возвращаю последнюю')
     def amount_coupons(self, connection):
