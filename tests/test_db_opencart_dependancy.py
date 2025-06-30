@@ -1,5 +1,5 @@
-from page_objects.Users_DB_Page import UsersDB
-from page_objects.Coupon_DB_Page import CouponsDB
+from page_objects.UsersDAO import UsersDB
+from page_objects.CouponDAO import CouponsDB
 import allure
 import pytest
 

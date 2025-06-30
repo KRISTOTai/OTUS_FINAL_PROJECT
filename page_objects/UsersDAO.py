@@ -1,5 +1,5 @@
 import allure
-from .BasePage_DB import BasePageDB
+from .BasePageDAO import BasePageDB
 
 
 class UsersDB(BasePageDB):

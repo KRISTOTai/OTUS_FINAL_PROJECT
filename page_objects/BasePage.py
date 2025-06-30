@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class BasePage:
+    TIMEOUT = 5
 
     def __init__(self, browser):
         self.browser = browser
@@ -28,7 +29,7 @@ class BasePage:
         return self.browser.get(url)
 
     @allure.step('Получаю элемент: {locator}')
-    def get_element(self, locator: tuple, timeout=5):
+    def get_element(self, locator: tuple, timeout=TIMEOUT):
         self.logger.info(f"Get element {locator}")
         return self.wrapper_screenshot(
             lambda: WebDriverWait(self.browser, timeout).until(EC.visibility_of_element_located(locator)),
@@ -42,14 +43,14 @@ class BasePage:
             lambda: element.click(), ElementClickInterceptedException)
 
     @allure.step('Ищу текст {text} в элементе: {locator}')
-    def present_element(self, locator: tuple, text: str, timeout=5):
+    def present_element(self, locator: tuple, text: str, timeout=TIMEOUT):
         self.logger.info(f"Present element {locator}")
         return self.wrapper_screenshot(
             lambda: WebDriverWait(self.browser, timeout).until(EC.text_to_be_present_in_element(locator, text)),
             TimeoutException)
 
     @allure.step('Ищу заголовок с текстом {text}')
-    def title_page(self, text: str, timeout=5):
+    def title_page(self, text: str, timeout=TIMEOUT):
         self.logger.info(f"Find title {text}")
         return self.wrapper_screenshot(
             lambda: WebDriverWait(self.browser, timeout).until(EC.title_contains(text)),
@@ -63,7 +64,7 @@ class BasePage:
             TimeoutException)
 
     @allure.step('Ищу отсутствующий элемент')
-    def is_element_absent(self, locator, timeout=5):
+    def is_element_absent(self, locator, timeout=TIMEOUT):
         self.logger.info(f"Check deleted element {locator}")
         try:
             WebDriverWait(self.browser, timeout).until(EC.presence_of_element_located(locator))

@@ -1,5 +1,5 @@
-from page_objects.Users_DB_Page import UsersDB
-from page_objects.Coupon_DB_Page import CouponsDB
+from page_objects.UsersDAO import UsersDB
+from page_objects.CouponDAO import CouponsDB
 import allure
 import pytest
 
@@ -41,7 +41,8 @@ def test_check_coupons_table(connection):
 @allure.feature('Create_coupon')
 @allure.title('Update_coupon_neg')
 @pytest.mark.parametrize(("name", "code", "discount", "total"),
-                         [("10% Discount", 999, 10.0, 10.0), ("15% Discount", 888, 15.0, 15.0)], ids=[tuple, tuple])
+                         [("10% Discount", 999, 10.0, 10.0), ("15% Discount", 888, 15.0, 15.0)],
+                         ids=["10% Discount", "15% Discount"])
 def test_update_coupon_discount_neg(connection, name, code, discount, total):
     params = (name, code, discount, total)
     non_existent_id = 999999  # несуществующий ID
